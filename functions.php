@@ -120,15 +120,12 @@ add_action( 'widgets_init', 'austinginder_widgets_init' );
  * Enqueue scripts and styles.
  */
 function austinginder_scripts() {
+	wp_enqueue_style( 'roboto-css', "https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900");
+	wp_enqueue_style( 'materialdesignicons-css', "https://cdn.jsdelivr.net/npm/@mdi/font@latest/css/materialdesignicons.min.css");
+    wp_enqueue_style( 'vuetify-css', "https://cdn.jsdelivr.net/npm/vuetify@2.0.0-beta.7/dist/vuetify.css");
+	wp_enqueue_script( 'vue-js', "https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js");
+	wp_enqueue_script( 'vuetify-js', "https://cdn.jsdelivr.net/npm/vuetify@2.0.0-beta.7/dist/vuetify.min.js");
 	wp_enqueue_style( 'austinginder-style', get_stylesheet_uri() );
-
-	wp_enqueue_script( 'austinginder-navigation', get_template_directory_uri() . '/js/navigation.js', array(), '20151215', true );
-
-	wp_enqueue_script( 'austinginder-skip-link-focus-fix', get_template_directory_uri() . '/js/skip-link-focus-fix.js', array(), '20151215', true );
-
-	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
-		wp_enqueue_script( 'comment-reply' );
-	}
 }
 add_action( 'wp_enqueue_scripts', 'austinginder_scripts' );
 
@@ -159,3 +156,56 @@ if ( defined( 'JETPACK__VERSION' ) ) {
 	require get_template_directory() . '/inc/jetpack.php';
 }
 
+/**
+ * Load Parsedown.
+ */
+require_once get_template_directory() . '/inc/parsedown.php';
+
+/**
+ * Load Jetpack compatibility file.
+ */
+function austinginder_posts() {
+
+	$Parsedown   = new Parsedown();
+
+	// WP_Query arguments
+	$args = array (
+		'post_type'              => array( 'post'),
+		'order'                  => 'DESC',
+		'orderby'                => 'date',
+		'posts_per_page' 		 => -1,
+	);
+
+	$posts = get_posts( $args );
+	$posts_formatted = array();
+	$previous_post_year = ""; 
+
+	foreach( $posts as $post ) {
+		$year = get_the_date( 'Y', $post->ID );
+		$month = get_the_date( 'M', $post->ID );
+		$content = $GLOBALS['wp_embed']->autoembed( $post->post_content );
+		if ( $year != $previous_post_year ) {
+			$posts_formated[] = (object) [
+				'ID' => "year_{$year}",
+				'title' => $year,
+				'created_at' => $month,
+				'format' => "year",
+				'content' => "",
+			];
+			$new_post_year = false;
+		}
+		$p = (object) [
+			'ID' => $post->ID,
+			'title' => get_the_title($post->ID),
+			'created_at' => $month,
+			'format' => get_post_format($post->ID),
+			'content' => $Parsedown->text( $content ),
+		];
+
+		$posts_formated[] = $p;
+		$previous_post_year = get_the_date( 'Y', $post->ID );
+	}
+
+	return json_encode( $posts_formated );
+
+}
