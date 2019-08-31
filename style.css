@@ -993,3 +993,4 @@ theme--light.application {
 .v-timeline-item__dot.v-timeline-item__dot--small {
     margin-top: 8px;
 }
+[v-cloak] > * { display:none; }

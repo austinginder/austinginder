@@ -10,8 +10,7 @@
 get_header();
 ?>
 <div id="app">
-<v-app>
-
+<v-app v-cloak>
 	<div class="blue darken-3">
 		<v-layout>
 		<v-flex sx12 mt-5 mb-5 style="text-align:center;" dark>
@@ -24,7 +23,6 @@ get_header();
 		</v-flex>
 		</v-layout>
 	</div>
-
 	<v-layout style="max-width:800px; margin: auto;">
 		<v-flex sx12>
 			<v-timeline dense align-top>
@@ -49,10 +47,7 @@ get_header();
 			</v-timeline>
 		</v-flex>
 	</v-layout>
-	<v-footer
-    color="blue darken-3"
-    padless
-  >
+	<v-footer color="blue darken-3" padless>
     <v-layout
       justify-center
       row
@@ -63,8 +58,8 @@ get_header();
         text-xs-center
         xs12
       >
-	    <a href="mailto:austinginder@gmail.com" style="text-decoration:none;"><v-icon color="white">mdi-email</v-icon></a>
-		<a href="http://twitter.com/austinginder" target="_blank" style="text-decoration:none;"><v-icon color="white">mdi-twitter</v-icon></a>
+        <a href="mailto:austinginder@gmail.com" style="text-decoration:none;"><v-icon color="white">mdi-email</v-icon></a>
+        <a href="http://twitter.com/austinginder" target="_blank" style="text-decoration:none;"><v-icon color="white">mdi-twitter</v-icon></a>
       </v-flex>
     </v-layout>
   </v-footer>
